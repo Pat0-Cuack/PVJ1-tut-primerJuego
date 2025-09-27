@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638945926640937835
-    m_Hash: 1342001873
+      ticks: 638946043678360025
+    m_Hash: 3162305149
   m_LockFileStatus:
     m_FilePath: C:/Users/selen/OneDrive/Escritorio/PVJ1-tut-primerJuego/PVJ1-tut-primerJuego/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638945926641546218
-    m_Hash: 4071150175
+      ticks: 638946043678389946
+    m_Hash: 3990521731
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
