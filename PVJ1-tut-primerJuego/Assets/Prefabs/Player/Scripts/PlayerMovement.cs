@@ -1,44 +1,59 @@
 using UnityEngine;
-/// <summary>
-/// Permite el comportamiento de movimiento del jugador.
-/// </summary>
+
 public class PlayerMovement : MonoBehaviour
 {
-    #region Atributos
-    /// <summary>
-    /// Fuerza aplicada para aplicar el moivimiento.
-    /// </summary>
-    private Vector3 fuerzaPorAplicar;
-    /// <summary>
-    /// Representa el tiempo que a transcurrido desde la ultima aplicación de fuerzas
-    /// </summary>
-    private float tiempoDesdeLaUltimaFuerza;
-    /// <summary>
-    /// Indica cuanto tiempo debe aplicarse la fuerza.
-    /// </summary>
-    private float intervaloTiempo;
-    #endregion
+    private Vector3 fuerzaAAplicar;
+    private float tiempoEntreUltimasFuerzas;
+    private float tiempoIntervalo;
 
-    #region Ciclo de vida del Script       
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private float speed;
+    private IMovementStrategy movementStrategy;
+
+    private void Start()
     {
-        fuerzaPorAplicar = new Vector3(0, 0, 300);
-        tiempoDesdeLaUltimaFuerza = 0f;
-        intervaloTiempo = 2f;
+        fuerzaAAplicar = new Vector3(0, 0, 300);
+        tiempoEntreUltimasFuerzas = 0f;
+        tiempoIntervalo = 2f;
 
+        speed = 5f;
+        SetMovementStrategy(new SmoothMovement());
     }
 
-    // Update is called once per frame
-   private void FixedUpdate()
+    public void SetMovementStrategy(IMovementStrategy movementStrategy)
     {
-       tiempoDesdeLaUltimaFuerza += Time.fixedDeltaTime;
-         if (tiempoDesdeLaUltimaFuerza >= intervaloTiempo)
-         {
-            GetComponent<Rigidbody>().AddForce(fuerzaPorAplicar);
-            tiempoDesdeLaUltimaFuerza = 0f;
+        this.movementStrategy = movementStrategy;
+    }
+
+    private void Update()
+    {
+        MovePlayer();
+        ChangeMovementStrategy();
+    }
+
+    public void MovePlayer()
+    {
+        movementStrategy?.Move(transform, speed);
+    }
+
+    private void FixedUpdate()
+    {
+        tiempoEntreUltimasFuerzas += Time.fixedDeltaTime;
+        if (tiempoEntreUltimasFuerzas >= tiempoIntervalo)
+        {
+            gameObject.GetComponent<Rigidbody>().AddForce(fuerzaAAplicar);
+            tiempoEntreUltimasFuerzas = 0f;
         }
     }
 
-    #endregion
+    private void ChangeMovementStrategy()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SetMovementStrategy(new SmoothMovement());
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SetMovementStrategy(new AcelerateMovement());
+        }
+    }
 }
