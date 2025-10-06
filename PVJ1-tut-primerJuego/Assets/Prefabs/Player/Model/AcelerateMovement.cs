@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class AcelerateMovement : IMovementStrategy
 {
-    public void Move(Transform transform, Player player, float direction)
+    public void Move(Transform transform, Player player, float input)
     {
-        float movement = direction * (player.Velocidad + player.Aceleracion) * Time.deltaTime;
+        float movement = input * (player.Velocidad * player.Aceleracion) * Time.deltaTime;
         transform.Translate(movement, 0, 0);
     }
 }
