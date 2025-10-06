@@ -2,58 +2,49 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Vector3 fuerzaAAplicar;
-    private float tiempoEntreUltimasFuerzas;
-    private float tiempoIntervalo;
-
-    private float speed;
+    private Player player;
     private IMovementStrategy movementStrategy;
 
-    private void Start()
-    {
-        fuerzaAAplicar = new Vector3(0, 0, 300);
-        tiempoEntreUltimasFuerzas = 0f;
-        tiempoIntervalo = 2f;
+    private Vector3 fuerzaPorAplicar;
+    private float tiempoDesdeUltimaFuerza;
+    private float intervaloTiempo;
 
-        speed = 5f;
-        SetMovementStrategy(new SmoothMovement());
+    void Start()
+    {
+        player = new Player(velocidad: 5f, aceleracion: 2f);
+        movementStrategy = new LateralMovement(); // Estrategia inicial
+
+        fuerzaPorAplicar = new Vector3(0, 0, 300f);
+        tiempoDesdeUltimaFuerza = 0f;
+        intervaloTiempo = 2f;
     }
 
-    public void SetMovementStrategy(IMovementStrategy movementStrategy)
+    void Update()
     {
-        this.movementStrategy = movementStrategy;
+        float input = Input.GetAxis("Horizontal");
+        MovePlayer(input);
     }
 
-    private void Update()
+    public void MovePlayer(float input)
     {
-        MovePlayer();
-        ChangeMovementStrategy();
-    }
-
-    public void MovePlayer()
-    {
-        movementStrategy?.Move(transform, speed);
-    }
-
-    private void FixedUpdate()
-    {
-        tiempoEntreUltimasFuerzas += Time.fixedDeltaTime;
-        if (tiempoEntreUltimasFuerzas >= tiempoIntervalo)
+        if (movementStrategy != null && player != null)
         {
-            gameObject.GetComponent<Rigidbody>().AddForce(fuerzaAAplicar);
-            tiempoEntreUltimasFuerzas = 0f;
+            movementStrategy.Move(transform, player, input);
         }
     }
 
-    private void ChangeMovementStrategy()
+    public void SetMovementStrategy(IMovementStrategy strategy)
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        this.movementStrategy = strategy;
+    }
+
+    void FixedUpdate()
+    {
+        tiempoDesdeUltimaFuerza += Time.fixedDeltaTime;
+        if (tiempoDesdeUltimaFuerza >= intervaloTiempo)
         {
-            SetMovementStrategy(new SmoothMovement());
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SetMovementStrategy(new AcelerateMovement());
+            GetComponent<Rigidbody>().AddForce(fuerzaPorAplicar);
+            tiempoDesdeUltimaFuerza = 0f;
         }
     }
 }
